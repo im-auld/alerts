@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: alerts
-        image: imauld/alerts:app-0.1.1
+        image: imauld/alerts:app-0.1.2
         imagePullPolicy: IfNotPresent
         command: 
         - "./alerts-svc"
