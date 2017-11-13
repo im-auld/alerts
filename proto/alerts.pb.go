@@ -9,15 +9,12 @@ It is generated from these files:
 	alerts.proto
 
 It has these top-level messages:
-	AlertType
 	AlertError
 	Alert
 	GetAlertsForUserRequest
 	GetAlertsForUserResponse
-	ArchiveAlertRequest
-	ArchiveAlertResponse
-	UnarchiveAlertRequest
-	UnarchiveAlertResponse
+	MarkAlertSeenRequest
+	MarkAlertSeenResponse
 	SendAlertRequest
 	SendAlertResponse
 */
@@ -43,78 +40,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type AlertTypes int32
-
-const (
-	AlertTypes_NEW_OFFER_MESSAGE             AlertTypes = 0
-	AlertTypes_NEW_BID_ON_OFFER              AlertTypes = 1
-	AlertTypes_PAYMENT_SENT                  AlertTypes = 2
-	AlertTypes_PAYMENT_RECEIVED              AlertTypes = 3
-	AlertTypes_BID_ACCEPTED                  AlertTypes = 4
-	AlertTypes_ITEM_RESERVED                 AlertTypes = 5
-	AlertTypes_RATING_INVITATION             AlertTypes = 6
-	AlertTypes_UPDATE_SETTINGS               AlertTypes = 7
-	AlertTypes_CURATION_WARNING              AlertTypes = 8
-	AlertTypes_GENERIC_ALERT                 AlertTypes = 9
-	AlertTypes_PRICE_DROP                    AlertTypes = 10
-	AlertTypes_DEPOSIT_METHOD_NEEDED         AlertTypes = 11
-	AlertTypes_SELLER_ALERT_MORE_INFO_NEEDED AlertTypes = 12
-	AlertTypes_FAILED_ID_CHECK               AlertTypes = 13
-	AlertTypes_NPS_SURVEY_ALERT              AlertTypes = 14
-	AlertTypes_ADD_PAYMENT_METHOD            AlertTypes = 15
-	AlertTypes_BUMP_ALERT                    AlertTypes = 16
-	AlertTypes_BOARDS_ITEM_ALERT             AlertTypes = 17
-	AlertTypes_ITEM_PRICE_ALERT              AlertTypes = 18
-)
-
-var AlertTypes_name = map[int32]string{
-	0:  "NEW_OFFER_MESSAGE",
-	1:  "NEW_BID_ON_OFFER",
-	2:  "PAYMENT_SENT",
-	3:  "PAYMENT_RECEIVED",
-	4:  "BID_ACCEPTED",
-	5:  "ITEM_RESERVED",
-	6:  "RATING_INVITATION",
-	7:  "UPDATE_SETTINGS",
-	8:  "CURATION_WARNING",
-	9:  "GENERIC_ALERT",
-	10: "PRICE_DROP",
-	11: "DEPOSIT_METHOD_NEEDED",
-	12: "SELLER_ALERT_MORE_INFO_NEEDED",
-	13: "FAILED_ID_CHECK",
-	14: "NPS_SURVEY_ALERT",
-	15: "ADD_PAYMENT_METHOD",
-	16: "BUMP_ALERT",
-	17: "BOARDS_ITEM_ALERT",
-	18: "ITEM_PRICE_ALERT",
-}
-var AlertTypes_value = map[string]int32{
-	"NEW_OFFER_MESSAGE":             0,
-	"NEW_BID_ON_OFFER":              1,
-	"PAYMENT_SENT":                  2,
-	"PAYMENT_RECEIVED":              3,
-	"BID_ACCEPTED":                  4,
-	"ITEM_RESERVED":                 5,
-	"RATING_INVITATION":             6,
-	"UPDATE_SETTINGS":               7,
-	"CURATION_WARNING":              8,
-	"GENERIC_ALERT":                 9,
-	"PRICE_DROP":                    10,
-	"DEPOSIT_METHOD_NEEDED":         11,
-	"SELLER_ALERT_MORE_INFO_NEEDED": 12,
-	"FAILED_ID_CHECK":               13,
-	"NPS_SURVEY_ALERT":              14,
-	"ADD_PAYMENT_METHOD":            15,
-	"BUMP_ALERT":                    16,
-	"BOARDS_ITEM_ALERT":             17,
-	"ITEM_PRICE_ALERT":              18,
-}
-
-func (x AlertTypes) String() string {
-	return proto.EnumName(AlertTypes_name, int32(x))
-}
-func (AlertTypes) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
-
 type AlertErrorCode int32
 
 const (
@@ -137,47 +62,7 @@ var AlertErrorCode_value = map[string]int32{
 func (x AlertErrorCode) String() string {
 	return proto.EnumName(AlertErrorCode_name, int32(x))
 }
-func (AlertErrorCode) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-type AlertType struct {
-	Id          int64  `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Value       string `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
-	Notice      string `protobuf:"bytes,3,opt,name=notice" json:"notice,omitempty"`
-	Description string `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
-}
-
-func (m *AlertType) Reset()                    { *m = AlertType{} }
-func (m *AlertType) String() string            { return proto.CompactTextString(m) }
-func (*AlertType) ProtoMessage()               {}
-func (*AlertType) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
-
-func (m *AlertType) GetId() int64 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-func (m *AlertType) GetValue() string {
-	if m != nil {
-		return m.Value
-	}
-	return ""
-}
-
-func (m *AlertType) GetNotice() string {
-	if m != nil {
-		return m.Notice
-	}
-	return ""
-}
-
-func (m *AlertType) GetDescription() string {
-	if m != nil {
-		return m.Description
-	}
-	return ""
-}
+func (AlertErrorCode) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 type AlertError struct {
 	Message   string         `protobuf:"bytes,1,opt,name=message" json:"message,omitempty"`
@@ -187,7 +72,7 @@ type AlertError struct {
 func (m *AlertError) Reset()                    { *m = AlertError{} }
 func (m *AlertError) String() string            { return proto.CompactTextString(m) }
 func (*AlertError) ProtoMessage()               {}
-func (*AlertError) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*AlertError) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 func (m *AlertError) GetMessage() string {
 	if m != nil {
@@ -204,29 +89,20 @@ func (m *AlertError) GetErrorCode() AlertErrorCode {
 }
 
 type Alert struct {
-	RecipientId      int64   `protobuf:"varint,1,opt,name=recipient_id,json=recipientId" json:"recipient_id,omitempty"`
-	Uniq             int64   `protobuf:"varint,2,opt,name=uniq" json:"uniq,omitempty"`
-	SenderId         int64   `protobuf:"varint,3,opt,name=sender_id,json=senderId" json:"sender_id,omitempty"`
-	Message          string  `protobuf:"bytes,4,opt,name=message" json:"message,omitempty"`
-	NoticeType       string  `protobuf:"bytes,5,opt,name=notice_type,json=noticeType" json:"notice_type,omitempty"`
-	Timestamp        string  `protobuf:"bytes,6,opt,name=timestamp" json:"timestamp,omitempty"`
-	ActionPath       string  `protobuf:"bytes,7,opt,name=action_path,json=actionPath" json:"action_path,omitempty"`
-	ObjectId         int64   `protobuf:"varint,8,opt,name=object_id,json=objectId" json:"object_id,omitempty"`
-	Archived         bool    `protobuf:"varint,9,opt,name=archived" json:"archived,omitempty"`
-	Read             bool    `protobuf:"varint,10,opt,name=read" json:"read,omitempty"`
-	ContentThumbnail string  `protobuf:"bytes,11,opt,name=content_thumbnail,json=contentThumbnail" json:"content_thumbnail,omitempty"`
-	ContentTypeId    int64   `protobuf:"varint,12,opt,name=content_type_id,json=contentTypeId" json:"content_type_id,omitempty"`
-	Visible          bool    `protobuf:"varint,13,opt,name=visible" json:"visible,omitempty"`
-	Ttl              float32 `protobuf:"fixed32,14,opt,name=ttl" json:"ttl,omitempty"`
-	PushTimestamp    string  `protobuf:"bytes,16,opt,name=push_timestamp,json=pushTimestamp" json:"push_timestamp,omitempty"`
-	ItemId           int64   `protobuf:"varint,17,opt,name=item_id,json=itemId" json:"item_id,omitempty"`
-	Seen             bool    `protobuf:"varint,18,opt,name=seen" json:"seen,omitempty"`
+	RecipientId int64  `protobuf:"varint,1,opt,name=recipient_id,json=recipientId" json:"recipient_id,omitempty"`
+	Uniq        int64  `protobuf:"varint,2,opt,name=uniq" json:"uniq,omitempty"`
+	ThreadId    int64  `protobuf:"varint,3,opt,name=thread_id,json=threadId" json:"thread_id,omitempty"`
+	Message     string `protobuf:"bytes,4,opt,name=message" json:"message,omitempty"`
+	Timestamp   int64  `protobuf:"varint,5,opt,name=timestamp" json:"timestamp,omitempty"`
+	ActionPath  string `protobuf:"bytes,6,opt,name=action_path,json=actionPath" json:"action_path,omitempty"`
+	Ttl         int64  `protobuf:"varint,7,opt,name=ttl" json:"ttl,omitempty"`
+	Seen        bool   `protobuf:"varint,8,opt,name=seen" json:"seen,omitempty"`
 }
 
 func (m *Alert) Reset()                    { *m = Alert{} }
 func (m *Alert) String() string            { return proto.CompactTextString(m) }
 func (*Alert) ProtoMessage()               {}
-func (*Alert) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*Alert) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 func (m *Alert) GetRecipientId() int64 {
 	if m != nil {
@@ -242,9 +118,9 @@ func (m *Alert) GetUniq() int64 {
 	return 0
 }
 
-func (m *Alert) GetSenderId() int64 {
+func (m *Alert) GetThreadId() int64 {
 	if m != nil {
-		return m.SenderId
+		return m.ThreadId
 	}
 	return 0
 }
@@ -256,18 +132,11 @@ func (m *Alert) GetMessage() string {
 	return ""
 }
 
-func (m *Alert) GetNoticeType() string {
-	if m != nil {
-		return m.NoticeType
-	}
-	return ""
-}
-
-func (m *Alert) GetTimestamp() string {
+func (m *Alert) GetTimestamp() int64 {
 	if m != nil {
 		return m.Timestamp
 	}
-	return ""
+	return 0
 }
 
 func (m *Alert) GetActionPath() string {
@@ -277,65 +146,9 @@ func (m *Alert) GetActionPath() string {
 	return ""
 }
 
-func (m *Alert) GetObjectId() int64 {
-	if m != nil {
-		return m.ObjectId
-	}
-	return 0
-}
-
-func (m *Alert) GetArchived() bool {
-	if m != nil {
-		return m.Archived
-	}
-	return false
-}
-
-func (m *Alert) GetRead() bool {
-	if m != nil {
-		return m.Read
-	}
-	return false
-}
-
-func (m *Alert) GetContentThumbnail() string {
-	if m != nil {
-		return m.ContentThumbnail
-	}
-	return ""
-}
-
-func (m *Alert) GetContentTypeId() int64 {
-	if m != nil {
-		return m.ContentTypeId
-	}
-	return 0
-}
-
-func (m *Alert) GetVisible() bool {
-	if m != nil {
-		return m.Visible
-	}
-	return false
-}
-
-func (m *Alert) GetTtl() float32 {
+func (m *Alert) GetTtl() int64 {
 	if m != nil {
 		return m.Ttl
-	}
-	return 0
-}
-
-func (m *Alert) GetPushTimestamp() string {
-	if m != nil {
-		return m.PushTimestamp
-	}
-	return ""
-}
-
-func (m *Alert) GetItemId() int64 {
-	if m != nil {
-		return m.ItemId
 	}
 	return 0
 }
@@ -348,15 +161,13 @@ func (m *Alert) GetSeen() bool {
 }
 
 type GetAlertsForUserRequest struct {
-	UserId      int64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	VisibleOnly bool  `protobuf:"varint,2,opt,name=visible_only,json=visibleOnly" json:"visible_only,omitempty"`
-	Cached      bool  `protobuf:"varint,3,opt,name=cached" json:"cached,omitempty"`
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
 }
 
 func (m *GetAlertsForUserRequest) Reset()                    { *m = GetAlertsForUserRequest{} }
 func (m *GetAlertsForUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetAlertsForUserRequest) ProtoMessage()               {}
-func (*GetAlertsForUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*GetAlertsForUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 func (m *GetAlertsForUserRequest) GetUserId() int64 {
 	if m != nil {
@@ -365,41 +176,19 @@ func (m *GetAlertsForUserRequest) GetUserId() int64 {
 	return 0
 }
 
-func (m *GetAlertsForUserRequest) GetVisibleOnly() bool {
-	if m != nil {
-		return m.VisibleOnly
-	}
-	return false
-}
-
-func (m *GetAlertsForUserRequest) GetCached() bool {
-	if m != nil {
-		return m.Cached
-	}
-	return false
-}
-
 type GetAlertsForUserResponse struct {
-	UnarchivedAlerts []*Alert    `protobuf:"bytes,1,rep,name=unarchived_alerts,json=unarchivedAlerts" json:"unarchived_alerts,omitempty"`
-	ArchivedAlerts   []*Alert    `protobuf:"bytes,2,rep,name=archived_alerts,json=archivedAlerts" json:"archived_alerts,omitempty"`
-	Error            *AlertError `protobuf:"bytes,3,opt,name=error" json:"error,omitempty"`
+	Alerts []*Alert    `protobuf:"bytes,1,rep,name=alerts" json:"alerts,omitempty"`
+	Error  *AlertError `protobuf:"bytes,3,opt,name=error" json:"error,omitempty"`
 }
 
 func (m *GetAlertsForUserResponse) Reset()                    { *m = GetAlertsForUserResponse{} }
 func (m *GetAlertsForUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetAlertsForUserResponse) ProtoMessage()               {}
-func (*GetAlertsForUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*GetAlertsForUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
-func (m *GetAlertsForUserResponse) GetUnarchivedAlerts() []*Alert {
+func (m *GetAlertsForUserResponse) GetAlerts() []*Alert {
 	if m != nil {
-		return m.UnarchivedAlerts
-	}
-	return nil
-}
-
-func (m *GetAlertsForUserResponse) GetArchivedAlerts() []*Alert {
-	if m != nil {
-		return m.ArchivedAlerts
+		return m.Alerts
 	}
 	return nil
 }
@@ -411,80 +200,40 @@ func (m *GetAlertsForUserResponse) GetError() *AlertError {
 	return nil
 }
 
-type ArchiveAlertRequest struct {
+type MarkAlertSeenRequest struct {
 	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
 	Uniq   int64 `protobuf:"varint,2,opt,name=uniq" json:"uniq,omitempty"`
 }
 
-func (m *ArchiveAlertRequest) Reset()                    { *m = ArchiveAlertRequest{} }
-func (m *ArchiveAlertRequest) String() string            { return proto.CompactTextString(m) }
-func (*ArchiveAlertRequest) ProtoMessage()               {}
-func (*ArchiveAlertRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (m *MarkAlertSeenRequest) Reset()                    { *m = MarkAlertSeenRequest{} }
+func (m *MarkAlertSeenRequest) String() string            { return proto.CompactTextString(m) }
+func (*MarkAlertSeenRequest) ProtoMessage()               {}
+func (*MarkAlertSeenRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
-func (m *ArchiveAlertRequest) GetUserId() int64 {
+func (m *MarkAlertSeenRequest) GetUserId() int64 {
 	if m != nil {
 		return m.UserId
 	}
 	return 0
 }
 
-func (m *ArchiveAlertRequest) GetUniq() int64 {
+func (m *MarkAlertSeenRequest) GetUniq() int64 {
 	if m != nil {
 		return m.Uniq
 	}
 	return 0
 }
 
-type ArchiveAlertResponse struct {
+type MarkAlertSeenResponse struct {
 	Error *AlertError `protobuf:"bytes,1,opt,name=error" json:"error,omitempty"`
 }
 
-func (m *ArchiveAlertResponse) Reset()                    { *m = ArchiveAlertResponse{} }
-func (m *ArchiveAlertResponse) String() string            { return proto.CompactTextString(m) }
-func (*ArchiveAlertResponse) ProtoMessage()               {}
-func (*ArchiveAlertResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+func (m *MarkAlertSeenResponse) Reset()                    { *m = MarkAlertSeenResponse{} }
+func (m *MarkAlertSeenResponse) String() string            { return proto.CompactTextString(m) }
+func (*MarkAlertSeenResponse) ProtoMessage()               {}
+func (*MarkAlertSeenResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
-func (m *ArchiveAlertResponse) GetError() *AlertError {
-	if m != nil {
-		return m.Error
-	}
-	return nil
-}
-
-type UnarchiveAlertRequest struct {
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	Uniq   int64 `protobuf:"varint,2,opt,name=uniq" json:"uniq,omitempty"`
-}
-
-func (m *UnarchiveAlertRequest) Reset()                    { *m = UnarchiveAlertRequest{} }
-func (m *UnarchiveAlertRequest) String() string            { return proto.CompactTextString(m) }
-func (*UnarchiveAlertRequest) ProtoMessage()               {}
-func (*UnarchiveAlertRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
-
-func (m *UnarchiveAlertRequest) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *UnarchiveAlertRequest) GetUniq() int64 {
-	if m != nil {
-		return m.Uniq
-	}
-	return 0
-}
-
-type UnarchiveAlertResponse struct {
-	Error *AlertError `protobuf:"bytes,1,opt,name=error" json:"error,omitempty"`
-}
-
-func (m *UnarchiveAlertResponse) Reset()                    { *m = UnarchiveAlertResponse{} }
-func (m *UnarchiveAlertResponse) String() string            { return proto.CompactTextString(m) }
-func (*UnarchiveAlertResponse) ProtoMessage()               {}
-func (*UnarchiveAlertResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
-
-func (m *UnarchiveAlertResponse) GetError() *AlertError {
+func (m *MarkAlertSeenResponse) GetError() *AlertError {
 	if m != nil {
 		return m.Error
 	}
@@ -498,7 +247,7 @@ type SendAlertRequest struct {
 func (m *SendAlertRequest) Reset()                    { *m = SendAlertRequest{} }
 func (m *SendAlertRequest) String() string            { return proto.CompactTextString(m) }
 func (*SendAlertRequest) ProtoMessage()               {}
-func (*SendAlertRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+func (*SendAlertRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 func (m *SendAlertRequest) GetAlert() *Alert {
 	if m != nil {
@@ -514,7 +263,7 @@ type SendAlertResponse struct {
 func (m *SendAlertResponse) Reset()                    { *m = SendAlertResponse{} }
 func (m *SendAlertResponse) String() string            { return proto.CompactTextString(m) }
 func (*SendAlertResponse) ProtoMessage()               {}
-func (*SendAlertResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+func (*SendAlertResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
 func (m *SendAlertResponse) GetError() *AlertError {
 	if m != nil {
@@ -524,18 +273,14 @@ func (m *SendAlertResponse) GetError() *AlertError {
 }
 
 func init() {
-	proto.RegisterType((*AlertType)(nil), "alerts.AlertType")
 	proto.RegisterType((*AlertError)(nil), "alerts.AlertError")
 	proto.RegisterType((*Alert)(nil), "alerts.Alert")
 	proto.RegisterType((*GetAlertsForUserRequest)(nil), "alerts.GetAlertsForUserRequest")
 	proto.RegisterType((*GetAlertsForUserResponse)(nil), "alerts.GetAlertsForUserResponse")
-	proto.RegisterType((*ArchiveAlertRequest)(nil), "alerts.ArchiveAlertRequest")
-	proto.RegisterType((*ArchiveAlertResponse)(nil), "alerts.ArchiveAlertResponse")
-	proto.RegisterType((*UnarchiveAlertRequest)(nil), "alerts.UnarchiveAlertRequest")
-	proto.RegisterType((*UnarchiveAlertResponse)(nil), "alerts.UnarchiveAlertResponse")
+	proto.RegisterType((*MarkAlertSeenRequest)(nil), "alerts.MarkAlertSeenRequest")
+	proto.RegisterType((*MarkAlertSeenResponse)(nil), "alerts.MarkAlertSeenResponse")
 	proto.RegisterType((*SendAlertRequest)(nil), "alerts.SendAlertRequest")
 	proto.RegisterType((*SendAlertResponse)(nil), "alerts.SendAlertResponse")
-	proto.RegisterEnum("alerts.AlertTypes", AlertTypes_name, AlertTypes_value)
 	proto.RegisterEnum("alerts.AlertErrorCode", AlertErrorCode_name, AlertErrorCode_value)
 }
 
@@ -551,8 +296,7 @@ const _ = grpc.SupportPackageIsVersion4
 
 type AlertsClient interface {
 	GetAlertsForUser(ctx context.Context, in *GetAlertsForUserRequest, opts ...grpc.CallOption) (*GetAlertsForUserResponse, error)
-	ArchiveAlert(ctx context.Context, in *ArchiveAlertRequest, opts ...grpc.CallOption) (*ArchiveAlertResponse, error)
-	UnarchiveAlert(ctx context.Context, in *UnarchiveAlertRequest, opts ...grpc.CallOption) (*UnarchiveAlertResponse, error)
+	MarkAlertSeen(ctx context.Context, in *MarkAlertSeenRequest, opts ...grpc.CallOption) (*MarkAlertSeenResponse, error)
 	SendAlert(ctx context.Context, in *SendAlertRequest, opts ...grpc.CallOption) (*SendAlertResponse, error)
 }
 
@@ -573,18 +317,9 @@ func (c *alertsClient) GetAlertsForUser(ctx context.Context, in *GetAlertsForUse
 	return out, nil
 }
 
-func (c *alertsClient) ArchiveAlert(ctx context.Context, in *ArchiveAlertRequest, opts ...grpc.CallOption) (*ArchiveAlertResponse, error) {
-	out := new(ArchiveAlertResponse)
-	err := grpc.Invoke(ctx, "/alerts.Alerts/ArchiveAlert", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *alertsClient) UnarchiveAlert(ctx context.Context, in *UnarchiveAlertRequest, opts ...grpc.CallOption) (*UnarchiveAlertResponse, error) {
-	out := new(UnarchiveAlertResponse)
-	err := grpc.Invoke(ctx, "/alerts.Alerts/UnarchiveAlert", in, out, c.cc, opts...)
+func (c *alertsClient) MarkAlertSeen(ctx context.Context, in *MarkAlertSeenRequest, opts ...grpc.CallOption) (*MarkAlertSeenResponse, error) {
+	out := new(MarkAlertSeenResponse)
+	err := grpc.Invoke(ctx, "/alerts.Alerts/MarkAlertSeen", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -604,8 +339,7 @@ func (c *alertsClient) SendAlert(ctx context.Context, in *SendAlertRequest, opts
 
 type AlertsServer interface {
 	GetAlertsForUser(context.Context, *GetAlertsForUserRequest) (*GetAlertsForUserResponse, error)
-	ArchiveAlert(context.Context, *ArchiveAlertRequest) (*ArchiveAlertResponse, error)
-	UnarchiveAlert(context.Context, *UnarchiveAlertRequest) (*UnarchiveAlertResponse, error)
+	MarkAlertSeen(context.Context, *MarkAlertSeenRequest) (*MarkAlertSeenResponse, error)
 	SendAlert(context.Context, *SendAlertRequest) (*SendAlertResponse, error)
 }
 
@@ -631,38 +365,20 @@ func _Alerts_GetAlertsForUser_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Alerts_ArchiveAlert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ArchiveAlertRequest)
+func _Alerts_MarkAlertSeen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkAlertSeenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AlertsServer).ArchiveAlert(ctx, in)
+		return srv.(AlertsServer).MarkAlertSeen(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/alerts.Alerts/ArchiveAlert",
+		FullMethod: "/alerts.Alerts/MarkAlertSeen",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AlertsServer).ArchiveAlert(ctx, req.(*ArchiveAlertRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Alerts_UnarchiveAlert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnarchiveAlertRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AlertsServer).UnarchiveAlert(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/alerts.Alerts/UnarchiveAlert",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AlertsServer).UnarchiveAlert(ctx, req.(*UnarchiveAlertRequest))
+		return srv.(AlertsServer).MarkAlertSeen(ctx, req.(*MarkAlertSeenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -694,12 +410,8 @@ var _Alerts_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Alerts_GetAlertsForUser_Handler,
 		},
 		{
-			MethodName: "ArchiveAlert",
-			Handler:    _Alerts_ArchiveAlert_Handler,
-		},
-		{
-			MethodName: "UnarchiveAlert",
-			Handler:    _Alerts_UnarchiveAlert_Handler,
+			MethodName: "MarkAlertSeen",
+			Handler:    _Alerts_MarkAlertSeen_Handler,
 		},
 		{
 			MethodName: "SendAlert",
@@ -713,70 +425,36 @@ var _Alerts_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("alerts.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 1039 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x56, 0xdd, 0x6e, 0xe2, 0x46,
-	0x14, 0x0e, 0x10, 0x08, 0x1c, 0x7e, 0x32, 0xcc, 0x26, 0x59, 0x6f, 0x76, 0xb7, 0xcb, 0x52, 0xb5,
-	0x42, 0x5b, 0x69, 0x2f, 0x52, 0xb5, 0x95, 0x2a, 0x55, 0xaa, 0xc1, 0x43, 0xd6, 0xda, 0x60, 0xb3,
-	0x63, 0x93, 0x68, 0x2f, 0xaa, 0x11, 0xc1, 0xa3, 0xe2, 0x16, 0x6c, 0xaf, 0x6d, 0x22, 0xf1, 0x48,
-	0x7d, 0x83, 0xbe, 0x40, 0x9f, 0xa9, 0xb7, 0xd5, 0xcc, 0xd8, 0x24, 0x90, 0x44, 0xab, 0xed, 0xdd,
-	0x9c, 0xef, 0xfc, 0x7c, 0xdf, 0x9c, 0x39, 0xc7, 0x00, 0x8d, 0xe9, 0x82, 0xc7, 0x69, 0xf2, 0x36,
-	0x8a, 0xc3, 0x34, 0xc4, 0x15, 0x65, 0x75, 0xff, 0x84, 0x9a, 0x2e, 0x4e, 0xee, 0x3a, 0xe2, 0xb8,
-	0x05, 0x45, 0xdf, 0xd3, 0x0a, 0x9d, 0x42, 0xaf, 0x44, 0x8b, 0xbe, 0x87, 0x8f, 0xa0, 0x7c, 0x33,
-	0x5d, 0xac, 0xb8, 0x56, 0xec, 0x14, 0x7a, 0x35, 0xaa, 0x0c, 0x7c, 0x02, 0x95, 0x20, 0x4c, 0xfd,
-	0x19, 0xd7, 0x4a, 0x12, 0xce, 0x2c, 0xdc, 0x81, 0xba, 0xc7, 0x93, 0x59, 0xec, 0x47, 0xa9, 0x1f,
-	0x06, 0xda, 0xbe, 0x74, 0xde, 0x85, 0xba, 0xbf, 0x01, 0x48, 0x32, 0x12, 0xc7, 0x61, 0x8c, 0x35,
-	0x38, 0x58, 0xf2, 0x24, 0x99, 0xfe, 0xce, 0x25, 0x65, 0x8d, 0xe6, 0x26, 0xfe, 0x01, 0x80, 0x8b,
-	0x10, 0x36, 0x0b, 0x3d, 0x45, 0xde, 0x3a, 0x3b, 0x79, 0x9b, 0xe9, 0xbf, 0xad, 0x30, 0x08, 0x3d,
-	0x4e, 0x6b, 0x3c, 0x3f, 0x76, 0xff, 0x2d, 0x41, 0x59, 0x7a, 0xf1, 0x6b, 0x68, 0xc4, 0x7c, 0xe6,
-	0x47, 0x3e, 0x0f, 0x52, 0xb6, 0xb9, 0x52, 0x7d, 0x83, 0x99, 0x1e, 0xc6, 0xb0, 0xbf, 0x0a, 0xfc,
-	0x4f, 0xb2, 0x7a, 0x89, 0xca, 0x33, 0x7e, 0x0e, 0xb5, 0x84, 0x07, 0x1e, 0x8f, 0x45, 0x4e, 0x49,
-	0x3a, 0xaa, 0x0a, 0x30, 0xbd, 0xbb, 0x72, 0xf7, 0xb7, 0xe5, 0xbe, 0x82, 0xba, 0x6a, 0x01, 0x4b,
-	0xd7, 0x11, 0xd7, 0xca, 0xd2, 0x0b, 0x0a, 0x92, 0x7d, 0x7d, 0x01, 0xb5, 0xd4, 0x5f, 0xf2, 0x24,
-	0x9d, 0x2e, 0x23, 0xad, 0x22, 0xdd, 0xb7, 0x80, 0x48, 0x9f, 0xce, 0x44, 0x7f, 0x58, 0x34, 0x4d,
-	0xe7, 0xda, 0x81, 0x4a, 0x57, 0xd0, 0x78, 0x9a, 0xce, 0x85, 0xac, 0xf0, 0xfa, 0x0f, 0x3e, 0x93,
-	0x57, 0xa9, 0x2a, 0x59, 0x0a, 0x30, 0x3d, 0x7c, 0x0a, 0xd5, 0x69, 0x3c, 0x9b, 0xfb, 0x37, 0xdc,
-	0xd3, 0x6a, 0x9d, 0x42, 0xaf, 0x4a, 0x37, 0xb6, 0xb8, 0x63, 0xcc, 0xa7, 0x9e, 0x06, 0x12, 0x97,
-	0x67, 0xfc, 0x1d, 0xb4, 0x67, 0x61, 0x90, 0x8a, 0xc6, 0xa4, 0xf3, 0xd5, 0xf2, 0x3a, 0x98, 0xfa,
-	0x0b, 0xad, 0x2e, 0x39, 0x51, 0xe6, 0x70, 0x73, 0x1c, 0x7f, 0x0b, 0x87, 0x9b, 0xe0, 0x75, 0xc4,
-	0x05, 0x7f, 0x43, 0xf2, 0x37, 0xf3, 0xd0, 0x75, 0xc4, 0x55, 0x6f, 0x6e, 0xfc, 0xc4, 0xbf, 0x5e,
-	0x70, 0xad, 0x29, 0xb9, 0x72, 0x13, 0x23, 0x28, 0xa5, 0xe9, 0x42, 0x6b, 0x75, 0x0a, 0xbd, 0x22,
-	0x15, 0x47, 0xfc, 0x0d, 0xb4, 0xa2, 0x55, 0x32, 0x67, 0xb7, 0x1d, 0x41, 0x92, 0xbd, 0x29, 0x50,
-	0x77, 0xd3, 0x95, 0xa7, 0x70, 0xe0, 0xa7, 0x7c, 0x29, 0x28, 0xdb, 0x92, 0xb2, 0x22, 0x4c, 0xf5,
-	0x70, 0x09, 0xe7, 0x81, 0x86, 0xd5, 0xa5, 0xc4, 0xb9, 0xbb, 0x84, 0xa7, 0xe7, 0x3c, 0x95, 0x6f,
-	0x9f, 0x0c, 0xc3, 0x78, 0x92, 0xf0, 0x98, 0xf2, 0x4f, 0x2b, 0x9e, 0xa4, 0xa2, 0xce, 0x2a, 0x51,
-	0x2f, 0xaa, 0xa6, 0xa0, 0x22, 0x4c, 0xd3, 0x13, 0x33, 0x92, 0x89, 0x64, 0x61, 0xb0, 0x58, 0xcb,
-	0x41, 0xa8, 0xd2, 0x7a, 0x86, 0xd9, 0xc1, 0x62, 0x2d, 0x26, 0x7d, 0x36, 0x9d, 0xcd, 0xb9, 0x1a,
-	0x86, 0x2a, 0xcd, 0xac, 0xee, 0xdf, 0x05, 0xd0, 0xee, 0xf3, 0x25, 0x51, 0x18, 0x24, 0x1c, 0xff,
-	0x0c, 0xed, 0x55, 0x90, 0x3f, 0x01, 0x53, 0x43, 0xab, 0x15, 0x3a, 0xa5, 0x5e, 0xfd, 0xac, 0xb9,
-	0x35, 0xc3, 0x14, 0xdd, 0xc6, 0xa9, 0x52, 0xf8, 0x47, 0x38, 0xdc, 0xcd, 0x2c, 0x3e, 0x94, 0xd9,
-	0xda, 0xc9, 0xeb, 0x41, 0x59, 0xae, 0x81, 0xd4, 0x59, 0x3f, 0xc3, 0xf7, 0x77, 0x85, 0xaa, 0x80,
-	0x6e, 0x1f, 0x9e, 0xe8, 0x2a, 0x57, 0x55, 0xfa, 0x5c, 0x97, 0x1e, 0x58, 0x93, 0xee, 0xaf, 0x70,
-	0xb4, 0x5d, 0x23, 0xbb, 0xf9, 0x46, 0x45, 0xe1, 0x73, 0x2a, 0x0c, 0x38, 0x9e, 0xe4, 0x77, 0xff,
-	0xff, 0x3a, 0xfa, 0x70, 0xb2, 0x5b, 0xe5, 0x8b, 0x95, 0xfc, 0x04, 0xc8, 0xe1, 0x81, 0xb7, 0x25,
-	0xe2, 0x6b, 0x28, 0xcb, 0xf8, 0x2c, 0x7b, 0xa7, 0xf7, 0xca, 0xd7, 0xfd, 0x05, 0xda, 0x77, 0x12,
-	0xbf, 0x94, 0xf7, 0xcd, 0x5f, 0xa5, 0xec, 0x5b, 0x28, 0x36, 0x28, 0xc1, 0xc7, 0xd0, 0xb6, 0xc8,
-	0x15, 0xb3, 0x87, 0x43, 0x42, 0xd9, 0x88, 0x38, 0x8e, 0x7e, 0x4e, 0xd0, 0x1e, 0x3e, 0x02, 0x24,
-	0xe0, 0xbe, 0x69, 0x30, 0xdb, 0x52, 0x5e, 0x54, 0xc0, 0x08, 0x1a, 0x63, 0xfd, 0xe3, 0x88, 0x58,
-	0x2e, 0x73, 0x88, 0xe5, 0xa2, 0xa2, 0x88, 0xcb, 0x11, 0x4a, 0x06, 0xc4, 0xbc, 0x24, 0x06, 0x2a,
-	0x89, 0x38, 0x91, 0xa9, 0x0f, 0x06, 0x64, 0xec, 0x12, 0x03, 0xed, 0xe3, 0x36, 0x34, 0x4d, 0x97,
-	0x8c, 0x18, 0x25, 0x0e, 0xa1, 0x22, 0xa8, 0x2c, 0x98, 0xa9, 0xee, 0x9a, 0xd6, 0x39, 0x33, 0xad,
-	0x4b, 0xd3, 0xd5, 0x5d, 0xd3, 0xb6, 0x50, 0x05, 0x3f, 0x81, 0xc3, 0xc9, 0xd8, 0xd0, 0x5d, 0xc2,
-	0x1c, 0xe2, 0x0a, 0xb7, 0x83, 0x0e, 0x04, 0xcd, 0x60, 0x42, 0x65, 0x08, 0xbb, 0xd2, 0xa9, 0x65,
-	0x5a, 0xe7, 0xa8, 0x2a, 0x8a, 0x9e, 0x13, 0x8b, 0x50, 0x73, 0xc0, 0xf4, 0x0b, 0x42, 0x5d, 0x54,
-	0xc3, 0x2d, 0x80, 0x31, 0x35, 0x07, 0x84, 0x19, 0xd4, 0x1e, 0x23, 0xc0, 0xcf, 0xe0, 0xd8, 0x20,
-	0x63, 0xdb, 0x31, 0x5d, 0x36, 0x22, 0xee, 0x3b, 0xdb, 0x60, 0x16, 0x21, 0x06, 0x31, 0x50, 0x1d,
-	0xbf, 0x86, 0x97, 0x0e, 0xb9, 0xb8, 0x20, 0x54, 0x25, 0xb3, 0x91, 0x4d, 0x09, 0x33, 0xad, 0xa1,
-	0x9d, 0x87, 0x34, 0x84, 0x96, 0xa1, 0x6e, 0x5e, 0x10, 0x83, 0x99, 0x06, 0x1b, 0xbc, 0x23, 0x83,
-	0xf7, 0xa8, 0x29, 0x5b, 0x33, 0x76, 0x98, 0x33, 0xa1, 0x97, 0xe4, 0x63, 0x46, 0xdc, 0xc2, 0x27,
-	0x80, 0x75, 0xc3, 0x60, 0x79, 0x33, 0x14, 0x19, 0x3a, 0x14, 0x82, 0xfa, 0x93, 0xd1, 0x38, 0x8b,
-	0x43, 0xe2, 0xd6, 0x7d, 0x5b, 0xa7, 0x86, 0xc3, 0x64, 0x3f, 0x14, 0xdc, 0x16, 0x45, 0xa5, 0xad,
-	0xc4, 0x2b, 0x14, 0xbf, 0xe9, 0x43, 0x6b, 0xfb, 0x47, 0x07, 0x37, 0xa1, 0x66, 0xd9, 0x2e, 0x1b,
-	0xda, 0x13, 0xcb, 0x40, 0x7b, 0xa2, 0xd1, 0xb2, 0x9f, 0x94, 0x11, 0x4a, 0x6d, 0xf1, 0x44, 0x87,
-	0x50, 0xef, 0xeb, 0x06, 0xa3, 0xe4, 0xc3, 0x84, 0x38, 0x2e, 0x2a, 0x9d, 0xfd, 0x53, 0x84, 0x4a,
-	0xb6, 0xac, 0x57, 0x80, 0x76, 0x3f, 0x1e, 0xf8, 0x55, 0x3e, 0x29, 0x8f, 0x7c, 0xc6, 0x4e, 0x3b,
-	0x8f, 0x07, 0xa8, 0xd9, 0xeb, 0xee, 0xe1, 0xf7, 0xd0, 0xb8, 0xbb, 0x97, 0xf8, 0xf9, 0x66, 0xfc,
-	0xee, 0x6f, 0xda, 0xe9, 0x8b, 0x87, 0x9d, 0x9b, 0x62, 0x1f, 0xa0, 0xb5, 0xbd, 0x5c, 0xf8, 0x65,
-	0x9e, 0xf1, 0xe0, 0xea, 0x9e, 0x7e, 0xf5, 0x98, 0x7b, 0x53, 0xb2, 0x0f, 0xb5, 0xcd, 0xca, 0x60,
-	0x2d, 0x0f, 0xdf, 0x5d, 0xbf, 0xd3, 0x67, 0x0f, 0x78, 0xf2, 0x1a, 0xd7, 0x15, 0xf9, 0xf7, 0xe5,
-	0xfb, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0xd2, 0xed, 0x45, 0xec, 0xce, 0x08, 0x00, 0x00,
+	// 490 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x94, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0xad, 0x71, 0xf3, 0xe1, 0x49, 0x52, 0xcc, 0x08, 0xe8, 0x12, 0x8a, 0x1a, 0x8c, 0x90, 0x2c,
+	0x0e, 0x3d, 0x18, 0x21, 0x4e, 0x1c, 0x92, 0xd6, 0x45, 0x39, 0x90, 0xc0, 0xa6, 0x81, 0x13, 0xb2,
+	0x4c, 0x3c, 0x22, 0x56, 0x1b, 0xdb, 0xdd, 0xdd, 0xfc, 0x59, 0xfe, 0x07, 0x77, 0xe4, 0xb5, 0x9d,
+	0x34, 0x69, 0xa2, 0x8a, 0xdb, 0xec, 0xbe, 0x79, 0xcf, 0x6f, 0xe6, 0xad, 0x0c, 0xed, 0xf0, 0x86,
+	0x84, 0x92, 0x67, 0x99, 0x48, 0x55, 0x8a, 0xf5, 0xe2, 0xe4, 0xfc, 0x04, 0xe8, 0xe7, 0x95, 0x2f,
+	0x44, 0x2a, 0x90, 0x41, 0x63, 0x41, 0x52, 0x86, 0xbf, 0x89, 0x19, 0x3d, 0xc3, 0xb5, 0x78, 0x75,
+	0xc4, 0x0f, 0x00, 0x94, 0xb7, 0x04, 0xb3, 0x34, 0x22, 0xf6, 0xa8, 0x67, 0xb8, 0x47, 0xde, 0xf3,
+	0xb3, 0x52, 0x72, 0xad, 0x70, 0x9e, 0x46, 0xc4, 0x2d, 0xaa, 0x4a, 0xe7, 0x8f, 0x01, 0x35, 0x8d,
+	0xe2, 0x6b, 0x68, 0x0b, 0x9a, 0xc5, 0x59, 0x4c, 0x89, 0x0a, 0xe2, 0x48, 0xeb, 0x9b, 0xbc, 0xb5,
+	0xba, 0x1b, 0x46, 0x88, 0x70, 0xb8, 0x4c, 0xe2, 0x5b, 0xad, 0x6e, 0x72, 0x5d, 0xe3, 0x4b, 0xb0,
+	0xd4, 0x5c, 0x50, 0x18, 0xe5, 0x1c, 0x53, 0x03, 0xcd, 0xe2, 0x62, 0x18, 0xdd, 0xb5, 0x7b, 0xb8,
+	0x69, 0xf7, 0x04, 0x2c, 0x15, 0x2f, 0x48, 0xaa, 0x70, 0x91, 0xb1, 0x9a, 0xa6, 0xad, 0x2f, 0xf0,
+	0x14, 0x5a, 0xe1, 0x4c, 0xc5, 0x69, 0x12, 0x64, 0xa1, 0x9a, 0xb3, 0xba, 0xe6, 0x42, 0x71, 0xf5,
+	0x35, 0x54, 0x73, 0xb4, 0xc1, 0x54, 0xea, 0x86, 0x35, 0x34, 0x31, 0x2f, 0x73, 0x6f, 0x92, 0x28,
+	0x61, 0xcd, 0x9e, 0xe1, 0x36, 0xb9, 0xae, 0x1d, 0x0f, 0x8e, 0x3f, 0x93, 0xd2, 0xe3, 0xc9, 0xcb,
+	0x54, 0x4c, 0x25, 0x09, 0x4e, 0xb7, 0x4b, 0x92, 0x0a, 0x8f, 0xa1, 0xb1, 0x94, 0x24, 0xd6, 0x83,
+	0xd6, 0xf3, 0xe3, 0x30, 0x72, 0xae, 0x81, 0xdd, 0xe7, 0xc8, 0x2c, 0x4d, 0x24, 0xe1, 0x5b, 0x28,
+	0x53, 0x61, 0x46, 0xcf, 0x74, 0x5b, 0x5e, 0x67, 0x63, 0xbf, 0xbc, 0x04, 0xd1, 0x85, 0x9a, 0x5e,
+	0xb0, 0x5e, 0x47, 0xcb, 0xc3, 0xfb, 0x29, 0xf0, 0xa2, 0xc1, 0x39, 0x87, 0xa7, 0x5f, 0x42, 0x71,
+	0xad, 0x81, 0x09, 0x51, 0xf2, 0x90, 0xbb, 0x5d, 0x09, 0x38, 0x7d, 0x78, 0xb6, 0x25, 0x52, 0xda,
+	0x5d, 0xf9, 0x30, 0x1e, 0xf2, 0xf1, 0x11, 0xec, 0x09, 0x25, 0x51, 0x31, 0x46, 0xe9, 0xe1, 0x0d,
+	0xd4, 0x74, 0x7f, 0xc9, 0xde, 0x9a, 0xb5, 0xc0, 0x9c, 0x4f, 0xf0, 0xe4, 0x0e, 0xf1, 0x7f, 0xbf,
+	0xfb, 0x6e, 0x00, 0x47, 0x9b, 0x4f, 0x13, 0x3b, 0x60, 0x8d, 0xc6, 0x57, 0xc1, 0xe5, 0x78, 0x3a,
+	0xba, 0xb0, 0x0f, 0xd0, 0x86, 0xf6, 0xc4, 0xe7, 0xdf, 0x7d, 0x1e, 0xf8, 0x9c, 0x8f, 0xb9, 0x6d,
+	0xe0, 0x63, 0x68, 0x0d, 0xfa, 0x17, 0x01, 0xf7, 0xbf, 0x4d, 0xfd, 0xc9, 0x95, 0x6d, 0x7a, 0x7f,
+	0x0d, 0xa8, 0x17, 0x71, 0xe1, 0x0f, 0xb0, 0xb7, 0xb3, 0xc3, 0xd3, 0xea, 0xeb, 0x7b, 0x5e, 0x42,
+	0xb7, 0xb7, 0xbf, 0xa1, 0x98, 0xc7, 0x39, 0xc0, 0x11, 0x74, 0x36, 0x56, 0x8c, 0x27, 0x15, 0x69,
+	0x57, 0x7c, 0xdd, 0x57, 0x7b, 0xd0, 0x95, 0xde, 0x00, 0xac, 0xd5, 0xda, 0x90, 0x55, 0xdd, 0xdb,
+	0x11, 0x74, 0x5f, 0xec, 0x40, 0x2a, 0x8d, 0x5f, 0x75, 0xfd, 0x9f, 0x78, 0xff, 0x2f, 0x00, 0x00,
+	0xff, 0xff, 0xa5, 0xb6, 0x02, 0xb3, 0x37, 0x04, 0x00, 0x00,
 }

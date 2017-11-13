@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net"
 	"os"
 
@@ -11,7 +10,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 )
 
-var logger = grpclog.NewLoggerV2(os.Stdout, os.Stdout, os.Stderr)
+var logger = grpclog.NewLoggerV2(os.Stdout, os.Stdout, os.Stdout)
 
 // AlertService ...
 type AlertService struct {
@@ -21,42 +20,39 @@ type AlertService struct {
 
 // GetAlertsForUser gets the alerts for the requested user
 func (as AlertService) GetAlertsForUser(ctx context.Context, req *pb.GetAlertsForUserRequest) (*pb.GetAlertsForUserResponse, error) {
+	var alertsPb []*pb.Alert
 	logger.Infof("Getting alerts for: %d", req.UserId)
-	archived, unarchived := []*pb.Alert{}, []*pb.Alert{}
-	// for _, alert := range as.DB[req.UserId] {
-	// 	if alert.Archived {
-	// 		archived = append(archived, alert)
-	// 	} else {
-	// 		unarchived = append(unarchived, alert)
-	// 	}
-	// }
-	as.logger.Infof("Got %d unarchived alerts", len(unarchived))
-	resp := &pb.GetAlertsForUserResponse{ArchivedAlerts: archived, UnarchivedAlerts: unarchived}
+	alerts, _ := as.DB.GetAlertsForRecipient(req.UserId)
+	as.logger.Infof("Got %d alerts", len(alerts))
+	for _, a := range alerts {
+		alertsPb = append(alertsPb, AlertToProto(a))
+	}
+	resp := &pb.GetAlertsForUserResponse{Alerts: alertsPb}
 	return resp, nil
 }
 
-// ArchiveAlert - Archive an alert.
-func (as AlertService) ArchiveAlert(ctx context.Context, req *pb.ArchiveAlertRequest) (*pb.ArchiveAlertResponse, error) {
-	resp := &pb.ArchiveAlertResponse{Error: nil}
-	return resp, nil
-}
-
-// UnarchiveAlert - Archive an alert.
-func (as AlertService) UnarchiveAlert(ctx context.Context, req *pb.UnarchiveAlertRequest) (*pb.UnarchiveAlertResponse, error) {
-	resp := &pb.UnarchiveAlertResponse{Error: nil}
-	return resp, nil
+// MarkAlertSeen: Marks an alert as seen.
+func (as AlertService) MarkAlertSeen(ctx context.Context, req *pb.MarkAlertSeenRequest) (*pb.MarkAlertSeenResponse, error) {
+	var alertError *pb.AlertError
+	err := as.DB.MarkAlertSeen(req.UserId, req.Uniq)
+	if err != nil {
+		alertError = &pb.AlertError{ErrorCode: pb.AlertErrorCode_SERVER_ERROR, Message: err.Error()}
+	}
+	resp := &pb.MarkAlertSeenResponse{Error: alertError}
+	return resp, err
 }
 
 // SendAlert ...
 func (as AlertService) SendAlert(ctx context.Context, req *pb.SendAlertRequest) (*pb.SendAlertResponse, error) {
 	var alertError *pb.AlertError
-	logger.Info(req.Alert)
 	alert := AlertFromProto(req.Alert)
 	err := as.DB.SaveAlert(alert)
 	if err != nil {
-		alertError = &pb.AlertError{ErrorCode: pb.AlertErrorCode_SERVER_ERROR, Message: fmt.Sprintf(err.Error())}
+		as.logger.Errorf("error sending alert: %s", err)
+		alertError = &pb.AlertError{ErrorCode: pb.AlertErrorCode_SERVER_ERROR, Message: err.Error()}
+		resp := &pb.SendAlertResponse{Error: alertError}
+		return resp, err
 	}
-	logger.Infof("Set alert with ID: %d", alert.Uniq)
 	resp := &pb.SendAlertResponse{Error: alertError}
 	return resp, nil
 }
@@ -69,12 +65,14 @@ func newServer() *AlertService {
 
 // StartAlertsServer ...
 func StartAlertsServer() {
-	lis, err := net.Listen("tcp", ":8080")
+	lis, err := net.Listen("tcp", "0.0.0.0:8081")
+	logger.Info(lis.Addr())
 	if err != nil {
-		grpclog.Fatalf("failed to listen: %v", err)
+		logger.Fatalf("failed to listen: %v", err)
 	}
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterAlertsServer(grpcServer, newServer())
+	logger.Info("Starting alerts server...")
 	grpcServer.Serve(lis)
 }
