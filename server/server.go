@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
+    "google.golang.org/grpc/metadata"
 )
 
 var logger = grpclog.NewLoggerV2(os.Stdout, os.Stdout, os.Stdout)
@@ -18,12 +19,20 @@ type AlertService struct {
 	logger grpclog.LoggerV2
 }
 
+func instrumentRequest(ctx context.Context, logger grpclog.LoggerV2) {
+    md, _ := metadata.FromIncomingContext(ctx)
+    endpoint := md["endpoint"]
+    userAgent := md["user-agent"]
+    caller := md["caller"]
+    template := "endpoint: %s user-agent: %s response_code: [200] caller: %s"
+    logger.Infof(template, endpoint, userAgent, caller)
+}
+
 // GetAlertsForUser gets the alerts for the requested user
 func (as AlertService) GetAlertsForUser(ctx context.Context, req *pb.GetAlertsForUserRequest) (*pb.GetAlertsForUserResponse, error) {
+    defer instrumentRequest(ctx, as.logger)
 	var alertsPb []*pb.Alert
-	logger.Infof("Getting alerts for: %d", req.UserId)
 	alerts, _ := as.DB.GetAlertsForRecipient(req.UserId)
-	as.logger.Infof("Got %d alerts", len(alerts))
 	for _, a := range alerts {
 		alertsPb = append(alertsPb, AlertToProto(a))
 	}
@@ -33,6 +42,7 @@ func (as AlertService) GetAlertsForUser(ctx context.Context, req *pb.GetAlertsFo
 
 // MarkAlertSeen: Marks an alert as seen.
 func (as AlertService) MarkAlertSeen(ctx context.Context, req *pb.MarkAlertSeenRequest) (*pb.MarkAlertSeenResponse, error) {
+    defer instrumentRequest(ctx, as.logger)
 	var alertError *pb.AlertError
 	err := as.DB.MarkAlertSeen(req.UserId, req.Uniq)
 	if err != nil {
@@ -44,6 +54,7 @@ func (as AlertService) MarkAlertSeen(ctx context.Context, req *pb.MarkAlertSeenR
 
 // SendAlert ...
 func (as AlertService) SendAlert(ctx context.Context, req *pb.SendAlertRequest) (*pb.SendAlertResponse, error) {
+    defer instrumentRequest(ctx, as.logger)
 	var alertError *pb.AlertError
 	alert := AlertFromProto(req.Alert)
 	err := as.DB.SaveAlert(alert)

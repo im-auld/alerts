@@ -28,9 +28,14 @@ spec:
         image: imauld/alerts:app-0.1.2
         imagePullPolicy: IfNotPresent
         command: 
-        - "./alerts-svc"
+          - "./alerts-svc"
         ports:
-        - containerPort: 8081
+          - containerPort: 8081
+        env:
+          - name: "AWS_ACCESS_KEY_ID"
+            value: "foo"
+          - name: "AWS_SECRET_ACCESS_KEY"
+            value: "bar"
       dnsPolicy: ClusterFirst
       restartPolicy: Always
 ---

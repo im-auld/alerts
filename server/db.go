@@ -20,9 +20,9 @@ type Alert struct {
 	Uniq        int64   `dynamo:",range"`
 	ThreadId    int64   `dynamo:",omitempty"`
 	Message     string  `dynamo:",omitempty"`
-	Timestamp   int64  `dynamo:",omitempty"`
+	Timestamp   int64   `dynamo:",omitempty"`
 	ActionPath  string  `dynamo:",omitempty"`
-	Ttl         int64 `dynamo:",omitempty"`
+	Ttl         int64   `dynamo:",omitempty"`
 	Seen        bool    `dynamo:",omitempty"`
 }
 
@@ -67,11 +67,8 @@ func NewDB() DB {
 }
 
 func (db DB) SaveAlert(alert *Alert) error {
-	if alert.Ttl == 0 {
-		alert.Ttl = int64(time.Now().Unix()) + ALERT_DEFAULT_TTL
-	} else {
-		alert.Ttl += ALERT_DEFAULT_TTL
-	}
+    alert.Timestamp = int64(time.Now().Unix())
+	alert.Ttl = alert.Timestamp + ALERT_DEFAULT_TTL
 	return saveAlertToTable(alert, db.table)
 }
 
@@ -107,9 +104,9 @@ func getUserAlerts(userId int64, table dynamo.Table) ([]Alert, error) {
 }
 
 func getAlert(recipientId, uniq int64, table dynamo.Table) (*Alert, error) {
-	var alert *Alert
-	err := table.Get("RecipientId", recipientId).Range("Uniq", dynamo.Equal, uniq).One(alert)
-	return alert, err
+	var alert Alert
+	err := table.Get("RecipientId", recipientId).Range("Uniq", dynamo.Equal, uniq).One(&alert)
+	return &alert, err
 }
 
 func getTable(db *dynamo.DB) dynamo.Table {
@@ -136,7 +133,7 @@ func computeKey(ha hash.Hash) int64 {
 func getAlertHash(alert Alert) hash.Hash {
 	ha := sha1.New()
 	ha.Write([]byte(fmt.Sprintf("recipient_id:%d", alert.RecipientId)))
-	ha.Write([]byte(fmt.Sprintf("notice_type:%s", alert.ThreadId)))
+	ha.Write([]byte(fmt.Sprintf("thread_id:%s", alert.ThreadId)))
 	ha.Write([]byte(fmt.Sprintf("action_path:%d", alert.ActionPath)))
 	return ha
 }
