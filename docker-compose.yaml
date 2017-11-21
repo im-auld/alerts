@@ -1,7 +1,7 @@
 version: "3"
 services:
   alerts:
-    image: imauld/alerts:app-0.1.2
+    image: imauld/alerts:app-0.1.3
     ports:
       - "8081:8081"
     command: "./alerts-svc"

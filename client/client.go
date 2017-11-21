@@ -39,7 +39,6 @@ func (ac AlertClient) SendAlert(alert *pb.Alert, ctx context.Context) (*pb.SendA
 func NewAlertClient(svcHost, svcPort string) AlertClient {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
-	//conn, err := grpc.Dial("192.168.99.100:32312", opts...)
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%s", svcHost, svcPort), opts...)
 	if err != nil {
 		grpclog.Fatalf("fail to dial: %v", err)

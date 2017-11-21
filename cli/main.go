@@ -78,18 +78,28 @@ func main() {
     }
 
     if sendCommand.Parsed() {
-        alert := &pb.Alert{
-            RecipientId: *sendUserFlag,
-            ActionPath: *pathFlag,
-            ThreadId: *threadFlag,
-            Message: *messageFlag,
+        if *sendUserFlag > 0 || *threadFlag > 0 {
+            alert := &pb.Alert{
+                RecipientId: *sendUserFlag,
+                ActionPath: *pathFlag,
+                ThreadId: *threadFlag,
+                Message: *messageFlag,
+            }
+            resp, err := c.SendAlert(alert, sendAlertContext())
+            fmt.Println(resp, err)
+        } else {
+            fmt.Println("user and thread are required arguments")
+            os.Exit(2)
         }
-        resp, err := c.SendAlert(alert, sendAlertContext())
-        fmt.Println(resp, err)
     }
 
     if seenCommand.Parsed() {
-        fmt.Println(c.MarkAlertSeen(*seenUserFlag, *uniqFlag, markAlertSeenContext()))
+        if *seenUserFlag > 0 || *uniqFlag > 0 {
+            fmt.Println(c.MarkAlertSeen(*seenUserFlag, *uniqFlag, markAlertSeenContext()))
+        } else {
+            fmt.Println("user and uniq are required arguments")
+            os.Exit(2)
+        }
     }
 
     if getCommand.Parsed() {
